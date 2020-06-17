@@ -5,7 +5,7 @@ using System.Collections;
 public class Fox_Move : MonoBehaviour {
 
     public float speed,jumpForce,cooldownHit;
-	public bool walking, running,up,down,jumping,crouching,dead,attacking,special;
+	public bool walking, running,up,down,jump, inAir, crouching,dead,attacking,special;
     private Rigidbody2D rb;
     private Animator anim;
 	private SpriteRenderer sp;
@@ -24,7 +24,8 @@ public class Fox_Move : MonoBehaviour {
 		running=false;
 		up=false;
 		down=false;
-		jumping=false;
+		jump=false;
+        inAir = false;
 		crouching=false;
 		rateOfHit=Time.time;
 		life=GameObject.FindGameObjectsWithTag("Life");
@@ -38,6 +39,7 @@ public class Fox_Move : MonoBehaviour {
         {
             MovementInput();
             JumpingInput();
+            Attack();
 
         }
     }
@@ -46,33 +48,36 @@ public class Fox_Move : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.X) && rb.velocity.y == 0)
         {
-            jumping = true;
+            jump = true;
         }
     }
 
     private void MovementInput()
     {
-        move = Input.GetAxisRaw("Horizontal");
-        if (move != 0)
+        if(!attacking)
         {
-            if (Input.GetKey(KeyCode.Z))
+            move = Input.GetAxisRaw("Horizontal");
+            if (move != 0)
             {
-                //Run
-                walking = false; running = true;
+                if (Input.GetKey(KeyCode.Z))
+                {
+                    //Run
+                    walking = false; running = true;
+                }
+                else
+                {
+                    // Walk
+                    walking = true; running = false;
+                }
             }
             else
             {
-                // Walk
-                walking = true; running = false;
+                walking = false; running = false;
+                // If no arrow is pressed to move then disable player's velocity immediately
+                Vector3 noHorizontalMoveVel = new Vector2(0, rb.velocity.y);
+                rb.velocity = noHorizontalMoveVel;
             }
-        }
-        else
-        {
-            walking = false; running = false;
-            // If no arrow is pressed to move then disable player's velocity immediately
-            Vector3 noHorizontalMoveVel = new Vector2(0, rb.velocity.y);
-            rb.velocity = noHorizontalMoveVel;
-        }
+        } 
     }
 
     // Update is called once per frame
@@ -146,10 +151,11 @@ public class Fox_Move : MonoBehaviour {
 
 	void Jump(){
 		//Jump
-		if(rb.velocity.y == 0 && jumping)
+		if(rb.velocity.y == 0 && jump)
         {
 			rb.AddForce(new Vector2(0,jumpForce));
-            jumping = false;
+            jump = false;
+            inAir = true;
 		}
         //Jump Animation
         if (rb.velocity.y > 0)
@@ -166,19 +172,27 @@ public class Fox_Move : MonoBehaviour {
         {
             down = false;
             anim.SetTrigger("Ground");
+            inAir = false;
         }
     }
 
-	void Attack(){																//I activated the attack animation and when the 
-		//Atacking																//animation finish the event calls the AttackEnd()
-		if(Input.GetKeyDown(KeyCode.C)){
-			rb.velocity=new Vector2(0,0);
-			anim.SetTrigger("Attack");
-			attacking=true;
-		}
+	void Attack(){                                                              
+        if (!inAir && !attacking)
+        {
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                rb.velocity = new Vector2(0, 0);
+                anim.SetTrigger("Attack");
+                attacking = true;
+
+                walking = false; running = false;
+            }
+        }
+		
 	}
 
-	void AttackEnd(){
+	void AttackEnd()
+    {
 		attacking=false;
 	}
 
