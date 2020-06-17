@@ -4,7 +4,7 @@ using System.Collections;
 
 public class Fox_Move : MonoBehaviour {
 
-    public float speed,jumpForce,cooldownHit;
+    public float walkingSpeed, runSpeed, jumpForce,cooldownHit;
 	public bool walking, running,up,down,jump, inAir, crouching,dead,attacking,special;
     private Rigidbody2D rb;
     private Animator anim;
@@ -14,6 +14,7 @@ public class Fox_Move : MonoBehaviour {
 	private int qtdLife;
 
     private float move = 0f;
+    private float moveSpeedWhileInAir = 0f;
 
 	// Use this for initialization
 	void Start () {
@@ -48,6 +49,14 @@ public class Fox_Move : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.X) && rb.velocity.y == 0)
         {
+            if (running)
+            {
+                moveSpeedWhileInAir = runSpeed;
+            }
+            else
+            {
+                moveSpeedWhileInAir = walkingSpeed;
+            }
             jump = true;
         }
     }
@@ -106,16 +115,20 @@ public class Fox_Move : MonoBehaviour {
     }
 
 	void Movement(){
-		//Character Move
-		if(running)
+        //Character Move
+        if (inAir)
+        {
+            rb.velocity = new Vector2(move * moveSpeedWhileInAir * Time.deltaTime, rb.velocity.y);
+        }
+		else if(running)
         {
 			//Run
-			rb.velocity = new Vector2(move*speed*Time.deltaTime*3,rb.velocity.y);
+			rb.velocity = new Vector2(move*runSpeed*Time.deltaTime,rb.velocity.y);
 		}
         else if (walking)
         {
 			//Walk
-			rb.velocity = new Vector2(move*speed*Time.deltaTime,rb.velocity.y);
+			rb.velocity = new Vector2(move*walkingSpeed*Time.deltaTime,rb.velocity.y);
 		}
 
 		//Turn
