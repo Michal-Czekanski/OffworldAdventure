@@ -5,7 +5,7 @@ using System.Collections;
 public class Fox_Move : MonoBehaviour {
 
     public float speed,jumpForce,cooldownHit;
-	public bool running,up,down,jumping,crouching,dead,attacking,special;
+	public bool walking, running,up,down,jumping,crouching,dead,attacking,special;
     private Rigidbody2D rb;
     private Animator anim;
 	private SpriteRenderer sp;
@@ -13,11 +13,14 @@ public class Fox_Move : MonoBehaviour {
 	private GameObject[] life;
 	private int qtdLife;
 
+    private float move = 0f;
+
 	// Use this for initialization
 	void Start () {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
 		sp=GetComponent<SpriteRenderer>();
+        walking = false;
 		running=false;
 		up=false;
 		down=false;
@@ -27,53 +30,105 @@ public class Fox_Move : MonoBehaviour {
 		life=GameObject.FindGameObjectsWithTag("Life");
 		qtdLife=life.Length;
 	}
-	
-	// Update is called once per frame
-	void FixedUpdate () {
-		if(dead==false){
-		//Character doesnt choose direction in Jump									//If you want to choose direction in jump
-			if(attacking==false){													//just delete the (jumping==false)
-				if(jumping==false&&crouching==false){
-					Movement();
-					Attack();
-					Special();
-				}
-				Jump();
-				Crouch();
-			}
-			Dead();
-		}
 
-	}
+
+    public void Update()
+    {
+        if(dead == false)
+        {
+            MovementInput();
+        }
+    }
+
+    private void MovementInput()
+    {
+        move = Input.GetAxisRaw("Horizontal");
+        if (move != 0)
+        {
+            if (Input.GetKey(KeyCode.Z))
+            {
+                //Run
+                walking = false; running = true;
+            }
+            else
+            {
+                // Walk
+                walking = true; running = false;
+            }
+        }
+        else
+        {
+            walking = false; running = false;
+            // If no arrow is pressed to move then disable player's velocity immediately
+            Vector3 noHorizontalMoveVel = new Vector2(0, rb.velocity.y);
+            rb.velocity = noHorizontalMoveVel;
+        }
+    }
+
+    // Update is called once per frame
+    void FixedUpdate () {
+
+        //if (dead == false)
+        //{
+        //    //Character doesnt choose direction in Jump									//If you want to choose direction in jump
+        //    if (attacking == false)
+        //    {                                                   //just delete the (jumping==false)
+        //        if (jumping == false && crouching == false)
+        //        {
+        //            Movement();
+        //            Attack();
+        //            Special();
+        //        }
+        //        Jump();
+        //        Crouch();
+        //    }
+        //    Dead();
+        //}
+
+        Movement();
+
+    }
 
 	void Movement(){
 		//Character Move
-		float move = Input.GetAxisRaw("Horizontal");
-		if(Input.GetKey(KeyCode.Z)){
+		if(running)
+        {
 			//Run
 			rb.velocity = new Vector2(move*speed*Time.deltaTime*3,rb.velocity.y);
-			running=true;
-		}else{
+		}
+        else if (walking)
+        {
 			//Walk
 			rb.velocity = new Vector2(move*speed*Time.deltaTime,rb.velocity.y);
-			running=false;
 		}
 
 		//Turn
-		if(rb.velocity.x<0){
+		if(rb.velocity.x < 0)
+        {
 			sp.flipX=true;
-		}else if(rb.velocity.x>0){
+		}
+        else if(rb.velocity.x > 0)
+        {
 			sp.flipX=false;
 		}
-		//Movement Animation
-		if(rb.velocity.x!=0&&running==false){
-			anim.SetBool("Walking",true);
-		}else{
+
+		// Walking Animation
+		if(rb.velocity.x != 0 && walking == true)
+        {
+			anim.SetBool("Walking", true);
+		}
+        else
+        {
 			anim.SetBool("Walking",false);
 		}
-		if(rb.velocity.x!=0&&running==true){
+
+        // Running Animation
+        if (rb.velocity.x != 0 && running == true)
+        {
 			anim.SetBool("Running",true);
-		}else{
+		}
+        else
+        {
 			anim.SetBool("Running",false);
 		}
 	}
