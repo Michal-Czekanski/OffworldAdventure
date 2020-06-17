@@ -1780,13 +1780,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d005370b84cf9904dab35eafbda7ccc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 150
+  walkingSpeed: 150
+  runSpeed: 300
   jumpForce: 300
   cooldownHit: 0
+  walking: 0
   running: 0
   up: 0
   down: 0
-  jumping: 0
+  jump: 0
+  inAir: 0
   crouching: 0
   dead: 0
   attacking: 0
