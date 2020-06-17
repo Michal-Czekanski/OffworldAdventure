@@ -37,6 +37,16 @@ public class Fox_Move : MonoBehaviour {
         if(dead == false)
         {
             MovementInput();
+            JumpingInput();
+
+        }
+    }
+
+    private void JumpingInput()
+    {
+        if (Input.GetKeyDown(KeyCode.X) && rb.velocity.y == 0)
+        {
+            jumping = true;
         }
     }
 
@@ -86,6 +96,7 @@ public class Fox_Move : MonoBehaviour {
         //}
 
         Movement();
+        Jump();
 
     }
 
@@ -135,26 +146,28 @@ public class Fox_Move : MonoBehaviour {
 
 	void Jump(){
 		//Jump
-		if(Input.GetKeyDown(KeyCode.X)&&rb.velocity.y==0){
+		if(rb.velocity.y == 0 && jumping)
+        {
 			rb.AddForce(new Vector2(0,jumpForce));
-
+            jumping = false;
 		}
-		//Jump Animation
-		if(rb.velocity.y>0&&up==false){
-			up=true;
-			jumping=true;
-			anim.SetTrigger("Up");
-		}else if(rb.velocity.y<0&&down==false){
-			down=true;
-			jumping=true;
-			anim.SetTrigger("Down");
-		}else if(rb.velocity.y==0&&(up==true||down==true)){
-			up=false;
-			down=false;
-			jumping=false;
-			anim.SetTrigger("Ground");
-		}
-	}
+        //Jump Animation
+        if (rb.velocity.y > 0)
+        {
+            up = true; down = false;
+            anim.SetTrigger("Up");
+        }
+        else if (rb.velocity.y < 0)
+        {
+            up = false; down = true;
+            anim.SetTrigger("Down");
+        }
+        else if (rb.velocity.y == 0 && down == true)
+        {
+            down = false;
+            anim.SetTrigger("Ground");
+        }
+    }
 
 	void Attack(){																//I activated the attack animation and when the 
 		//Atacking																//animation finish the event calls the AttackEnd()
