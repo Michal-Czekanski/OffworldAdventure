@@ -5,7 +5,7 @@ using System.Collections;
 public class Fox_Move : MonoBehaviour {
 
     public float walkingSpeed, runSpeed, jumpForce,cooldownHit;
-	public bool walking, running,up,down,jump, inAir, crouching,dead,attacking,special;
+	public bool walking, running, up, down, jump, inAir, crouching, dead, attacking, usingSpecialAttack;
     private Rigidbody2D rb;
     private Animator anim;
 	private SpriteRenderer sp;
@@ -42,6 +42,7 @@ public class Fox_Move : MonoBehaviour {
             JumpingInput();
             Attack();
             Crouch();
+            Special();
 
         }
     }
@@ -64,7 +65,7 @@ public class Fox_Move : MonoBehaviour {
 
     private void MovementInput()
     {
-        if(!attacking && !crouching)
+        if(!attacking && !crouching && !usingSpecialAttack)
         {
             move = Input.GetAxisRaw("Horizontal");
             if (move != 0)
@@ -211,12 +212,18 @@ public class Fox_Move : MonoBehaviour {
 	}
 
 	void Special(){
-		if(Input.GetKey(KeyCode.Space)){
-			anim.SetBool("Special",true);
-		}else{
-			anim.SetBool("Special",false);
-		}
-	}
+        if (Input.GetKey(KeyCode.Space) && !inAir)
+        {
+            walking = false; running = false; rb.velocity = Vector2.zero;
+            usingSpecialAttack = true;
+            anim.SetBool("Special", true);
+        }
+        else
+        {
+            usingSpecialAttack = false;
+            anim.SetBool("Special", false);
+        }
+    }
 
 	void Crouch(){
         //Crouch
