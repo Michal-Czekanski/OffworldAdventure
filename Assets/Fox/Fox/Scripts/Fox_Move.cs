@@ -41,6 +41,7 @@ public class Fox_Move : MonoBehaviour {
             MovementInput();
             JumpingInput();
             Attack();
+            Crouch();
 
         }
     }
@@ -63,7 +64,7 @@ public class Fox_Move : MonoBehaviour {
 
     private void MovementInput()
     {
-        if(!attacking)
+        if(!attacking && !crouching)
         {
             move = Input.GetAxisRaw("Horizontal");
             if (move != 0)
@@ -218,13 +219,23 @@ public class Fox_Move : MonoBehaviour {
 	}
 
 	void Crouch(){
-		//Crouch
-		if(Input.GetKey(KeyCode.DownArrow)){
-			anim.SetBool("Crouching",true);
-		}else{
-			anim.SetBool("Crouching",false);
-		}
-	}
+        //Crouch
+        if(attacking == false && inAir == false)
+        {
+            if (Input.GetKey(KeyCode.DownArrow))
+            {
+                walking = false; running = false; rb.velocity = Vector2.zero;
+                crouching = true;
+                anim.SetBool("Crouching", true);
+            }
+            else
+            {
+                crouching = false;
+                anim.SetBool("Crouching", false);
+            }
+        }
+        
+    }
 
 	void OnTriggerEnter2D(Collider2D other){							//Case of Bullet
 		if(other.tag=="Enemy"){
