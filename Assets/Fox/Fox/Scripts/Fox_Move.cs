@@ -13,7 +13,7 @@ public class Fox_Move : MonoBehaviour {
 	private GameObject[] life;
 	private int qtdLife;
 
-    private float move = 0f;
+    private float move, direction;
     private float moveSpeedWhileInAir = 0f;
 
 	// Use this for initialization
@@ -137,11 +137,13 @@ public class Fox_Move : MonoBehaviour {
 		if(rb.velocity.x < 0)
         {
 			sp.flipX=true;
+            anim.SetBool("LookingLeft", true);
 		}
         else if(rb.velocity.x > 0)
         {
 			sp.flipX=false;
-		}
+            anim.SetBool("LookingLeft", false);
+        }
 
 		// Walking Animation
 		if(rb.velocity.x != 0 && walking == true)
