@@ -195,7 +195,7 @@ public class Fox_Move : MonoBehaviour {
     }
 
 	void Attack(){                                                              
-        if (!inAir && !attacking)
+        if (!inAir && !attacking && !usingSpecialAttack)
         {
             if (Input.GetKeyDown(KeyCode.C))
             {
@@ -215,7 +215,7 @@ public class Fox_Move : MonoBehaviour {
 	}
 
 	void Special(){
-        if (Input.GetKey(KeyCode.Space) && !inAir)
+        if (Input.GetKey(KeyCode.Space) && !inAir && !attacking)
         {
             walking = false; running = false; rb.velocity = Vector2.zero;
             usingSpecialAttack = true;
