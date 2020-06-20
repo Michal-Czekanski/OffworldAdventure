@@ -171,6 +171,7 @@ public class Fox_Move : MonoBehaviour {
 			rb.AddForce(new Vector2(0,jumpForce));
             jump = false;
             inAir = true;
+            crouching = false;
 		}
         //Jump Animation
         if (rb.velocity.y > 0)
