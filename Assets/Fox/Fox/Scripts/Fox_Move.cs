@@ -49,17 +49,21 @@ public class Fox_Move : MonoBehaviour {
 
     private void JumpingInput()
     {
-        if (Input.GetKeyDown(KeyCode.X) && rb.velocity.y == 0)
+        if (Input.GetKeyDown(KeyCode.X))
         {
-            if (running)
+            if (Mathf.Abs(rb.velocity.y) < 2)
             {
-                moveSpeedWhileInAir = runSpeed;
+                if (running)
+                {
+                    moveSpeedWhileInAir = runSpeed;
+                }
+                else
+                {
+                    moveSpeedWhileInAir = walkingSpeed;
+                }
+                jump = true;
             }
-            else
-            {
-                moveSpeedWhileInAir = walkingSpeed;
-            }
-            jump = true;
+            
         }
     }
 
@@ -168,29 +172,37 @@ public class Fox_Move : MonoBehaviour {
 
 	void Jump(){
 		//Jump
-		if(rb.velocity.y == 0 && jump)
+		if(jump)
         {
 			rb.AddForce(new Vector2(0,jumpForce));
             jump = false;
             inAir = true;
             crouching = false;
+            rb.gravityScale = 1;
 		}
         //Jump Animation
-        if (rb.velocity.y > 0)
+        if (rb.velocity.y > 2)
         {
             up = true; down = false;
             anim.SetTrigger("Up");
+            Debug.Log("UP");
+            Debug.Log(rb.velocity.y);
         }
-        else if (rb.velocity.y < 0)
+        // Falling animation
+        else if (rb.velocity.y < -2)
         {
             up = false; down = true;
             anim.SetTrigger("Down");
+            Debug.Log("DOWN");
+            Debug.Log(rb.velocity.y);
         }
-        else if (rb.velocity.y == 0 && down == true)
+        // On ground animation
+        else if (Mathf.Abs(rb.velocity.y) < 2 && down == true)
         {
             down = false;
             anim.SetTrigger("Ground");
             inAir = false;
+            rb.gravityScale = 3;
         }
     }
 
