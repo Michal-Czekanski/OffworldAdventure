@@ -49,7 +49,7 @@ public class Fox_Move : MonoBehaviour {
 
     private void JumpingInput()
     {
-        if (Input.GetKeyDown(KeyCode.X))
+        if (Input.GetKeyDown(KeyCode.X) && !inAir)
         {
             if (Mathf.Abs(rb.velocity.y) < 2)
             {
