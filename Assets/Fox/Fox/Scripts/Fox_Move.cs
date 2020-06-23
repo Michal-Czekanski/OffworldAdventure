@@ -185,16 +185,12 @@ public class Fox_Move : MonoBehaviour {
         {
             up = true; down = false;
             anim.SetTrigger("Up");
-            Debug.Log("UP");
-            Debug.Log(rb.velocity.y);
         }
         // Falling animation
         else if (rb.velocity.y < -2)
         {
             up = false; down = true;
             anim.SetTrigger("Down");
-            Debug.Log("DOWN");
-            Debug.Log(rb.velocity.y);
         }
         // On ground animation
         else if (Mathf.Abs(rb.velocity.y) < 2 && down == true)
