@@ -152,12 +152,12 @@ public class Fox_Move : MonoBehaviour {
 		}
 
 		//Turn
-		if(rb.velocity.x < 0)
+		if(rb.velocity.x < 0 && !attacking)
         {
 			sp.flipX=true;
             anim.SetBool("LookingLeft", true);
 		}
-        else if(rb.velocity.x > 0)
+        else if(rb.velocity.x > 0 && !attacking)
         {
 			sp.flipX=false;
             anim.SetBool("LookingLeft", false);
@@ -214,7 +214,8 @@ public class Fox_Move : MonoBehaviour {
         {
             if (Input.GetKeyDown(KeyCode.C))
             {
-                rb.velocity = new Vector2(0, 0);
+                Vector3 noHorizontalMoveVel = new Vector2(0, rb.velocity.y);
+                rb.velocity = noHorizontalMoveVel;
                 anim.SetTrigger("Attack");
                 attacking = true;
 
@@ -290,36 +291,39 @@ public class Fox_Move : MonoBehaviour {
         bool collisionFromPlayersRight = contactPoint.x > playerColliderCenter.x;
         bool collisionFromPlayersLeft = contactPoint.x < playerColliderCenter.x;
 
-        // If there is collsion from left of player ...
-        if (collisionFromPlayersLeft)
-        {
-            // If user wants to go left - towards collision ...
-            Debug.Log("LEFT");
-            if (horizontalMoveInput < 0)
-            {
-                // If player is not moving because of pushing against collision ...
-                if (rb.velocity.x > -0.01)
-                {
-                    // ... stop him from pushing on that collision, because he now floats in the air
-                    horizontalMoveInput = 0;
-                    movingLeftDisabled = true; movingRightDisabled = false;
-                }
-            }
-        }
-        // Same as above if statement
-        if (collisionFromPlayersRight)
-        {
-            Debug.Log("RIGHT");
-            if (horizontalMoveInput > 0)
-            {
-                if (rb.velocity.x < 0.01)
-                {
-                    horizontalMoveInput = 0;
-                    movingRightDisabled = true; movingLeftDisabled = false;
-                }
-            }
-        }
         
+        if (!attacking && !usingSpecialAttack && !crouching && (walking || running || jumping))
+        {
+            // If there is collsion from left of player ...
+            if (collisionFromPlayersLeft)
+            {
+                // If user wants to go left - towards collision ...
+                Debug.Log("LEFT");
+                if (horizontalMoveInput < 0)
+                {
+                    // If player is not moving because of pushing against collision ...
+                    if (rb.velocity.x > -0.01)
+                    {
+                        // ... stop him from pushing on that collision, because he now floats in the air
+                        horizontalMoveInput = 0;
+                        movingLeftDisabled = true; movingRightDisabled = false;
+                    }
+                }
+            }
+            // Same as above if statement
+            if (collisionFromPlayersRight)
+            {
+                Debug.Log("RIGHT");
+                if (horizontalMoveInput > 0)
+                {
+                    if (rb.velocity.x < 0.01)
+                    {
+                        horizontalMoveInput = 0;
+                        movingRightDisabled = true; movingLeftDisabled = false;
+                    }
+                }
+            }
+        }
     }
 
     public void OnCollisionExit2D(Collision2D collision)
