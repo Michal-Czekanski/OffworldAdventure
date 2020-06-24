@@ -13,14 +13,19 @@ public class Fox_Move : MonoBehaviour {
 	private GameObject[] life;
 	private int qtdLife;
 
-    private float move, direction;
+    private float horizontalMoveInput, direction;
     private float moveSpeedWhileInAir = 0f;
+
+    private BoxCollider2D playerCollider;
+
+    private bool movingLeftDisabled, movingRightDisabled;
 
 	// Use this for initialization
 	void Start () {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
 		sp=GetComponent<SpriteRenderer>();
+        playerCollider = GetComponent<BoxCollider2D>();
         walking = false;
 		running=false;
 		flyingUp=false;
@@ -71,8 +76,8 @@ public class Fox_Move : MonoBehaviour {
     {
         if(!attacking && !crouching && !usingSpecialAttack)
         {
-            move = Input.GetAxisRaw("Horizontal");
-            if (move != 0)
+            horizontalMoveInput = Input.GetAxisRaw("Horizontal");
+            if (horizontalMoveInput != 0)
             {
                 if (Input.GetKey(KeyCode.Z))
                 {
@@ -121,20 +126,29 @@ public class Fox_Move : MonoBehaviour {
     }
 
 	void Movement(){
-        //Character Move
+        // Character Move
+        if (movingLeftDisabled && horizontalMoveInput < 0)
+        {
+            horizontalMoveInput = 0;
+        }
+        if (movingRightDisabled && horizontalMoveInput > 0)
+        {
+            horizontalMoveInput = 0;
+        }
+
         if (jumping)
         {
-            rb.velocity = new Vector2(move * moveSpeedWhileInAir * Time.deltaTime, rb.velocity.y);
+            rb.velocity = new Vector2(horizontalMoveInput * moveSpeedWhileInAir * Time.deltaTime, rb.velocity.y);
         }
 		else if(running)
         {
 			//Run
-			rb.velocity = new Vector2(move*runSpeed*Time.deltaTime,rb.velocity.y);
+			rb.velocity = new Vector2(horizontalMoveInput*runSpeed*Time.deltaTime,rb.velocity.y);
 		}
         else if (walking)
         {
 			//Walk
-			rb.velocity = new Vector2(move*walkingSpeed*Time.deltaTime,rb.velocity.y);
+			rb.velocity = new Vector2(horizontalMoveInput*walkingSpeed*Time.deltaTime,rb.velocity.y);
 		}
 
 		//Turn
@@ -268,7 +282,52 @@ public class Fox_Move : MonoBehaviour {
         }
 	}
 
-	void Hurt(){
+    public void OnCollisionStay2D(Collision2D collision)
+    {
+        Vector3 contactPoint = collision.contacts[0].point;
+        Vector3 playerColliderCenter = playerCollider.bounds.center;
+
+        bool collisionFromPlayersRight = contactPoint.x > playerColliderCenter.x;
+        bool collisionFromPlayersLeft = contactPoint.x < playerColliderCenter.x;
+
+        // If there is collsion from left of player ...
+        if (collisionFromPlayersLeft)
+        {
+            // If user wants to go left - towards collision ...
+            Debug.Log("LEFT");
+            if (horizontalMoveInput < 0)
+            {
+                // If player is not moving because of pushing against collision ...
+                if (rb.velocity.x > -0.01)
+                {
+                    // ... stop him from pushing on that collision, because he now floats in the air
+                    horizontalMoveInput = 0;
+                    movingLeftDisabled = true; movingRightDisabled = false;
+                }
+            }
+        }
+        // Same as above if statement
+        if (collisionFromPlayersRight)
+        {
+            Debug.Log("RIGHT");
+            if (horizontalMoveInput > 0)
+            {
+                if (rb.velocity.x < 0.01)
+                {
+                    horizontalMoveInput = 0;
+                    movingRightDisabled = true; movingLeftDisabled = false;
+                }
+            }
+        }
+        
+    }
+
+    public void OnCollisionExit2D(Collision2D collision)
+    {
+        movingLeftDisabled = false; movingRightDisabled = false;
+    }
+
+    void Hurt(){
 		if(rateOfHit<Time.time){
 			rateOfHit=Time.time+cooldownHit;
 			Destroy(life[qtdLife-1]);
