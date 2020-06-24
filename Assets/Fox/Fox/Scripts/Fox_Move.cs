@@ -5,7 +5,7 @@ using System.Collections;
 public class Fox_Move : MonoBehaviour {
 
     public float walkingSpeed, runSpeed, jumpForce,cooldownHit;
-	public bool walking, running, up, down, jump, inAir, crouching, dead, attacking, usingSpecialAttack;
+	public bool walking, running, flyingUp, fallingDown, jumpWasPressedAndIsPossible, jumping, crouching, dead, attacking, usingSpecialAttack;
     private Rigidbody2D rb;
     private Animator anim;
 	private SpriteRenderer sp;
@@ -23,10 +23,10 @@ public class Fox_Move : MonoBehaviour {
 		sp=GetComponent<SpriteRenderer>();
         walking = false;
 		running=false;
-		up=false;
-		down=false;
-		jump=false;
-        inAir = false;
+		flyingUp=false;
+		fallingDown=false;
+		jumpWasPressedAndIsPossible=false;
+        jumping = false;
 		crouching=false;
 		rateOfHit=Time.time;
 		life=GameObject.FindGameObjectsWithTag("Life");
@@ -49,7 +49,7 @@ public class Fox_Move : MonoBehaviour {
 
     private void JumpingInput()
     {
-        if (Input.GetKeyDown(KeyCode.X) && !inAir)
+        if (Input.GetKeyDown(KeyCode.X) && !jumping)
         {
             if (Mathf.Abs(rb.velocity.y) < 2)
             {
@@ -61,7 +61,7 @@ public class Fox_Move : MonoBehaviour {
                 {
                     moveSpeedWhileInAir = walkingSpeed;
                 }
-                jump = true;
+                jumpWasPressedAndIsPossible = true;
             }
             
         }
@@ -122,7 +122,7 @@ public class Fox_Move : MonoBehaviour {
 
 	void Movement(){
         //Character Move
-        if (inAir)
+        if (jumping)
         {
             rb.velocity = new Vector2(move * moveSpeedWhileInAir * Time.deltaTime, rb.velocity.y);
         }
@@ -171,39 +171,32 @@ public class Fox_Move : MonoBehaviour {
 	}
 
 	void Jump(){
-		//Jump
-		if(jump)
+		// Applying jump force
+		if(jumpWasPressedAndIsPossible)
         {
 			rb.AddForce(new Vector2(0,jumpForce));
-            jump = false;
-            inAir = true;
+            jumpWasPressedAndIsPossible = false;
+            jumping = true;
             crouching = false;
             rb.gravityScale = 1;
 		}
-        //Jump Animation
+        // Flying up Animation
         if (rb.velocity.y > 2)
         {
-            up = true; down = false;
+            flyingUp = true; fallingDown = false;
             anim.SetTrigger("Up");
         }
         // Falling animation
-        else if (rb.velocity.y < -2)
+        else if ((flyingUp && rb.velocity.y <= 0) || rb.velocity.y < -2)
         {
-            up = false; down = true;
+            flyingUp = false; fallingDown = true;
             anim.SetTrigger("Down");
         }
-        // On ground animation
-        else if (Mathf.Abs(rb.velocity.y) < 2 && down == true)
-        {
-            down = false;
-            anim.SetTrigger("Ground");
-            inAir = false;
-            rb.gravityScale = 3;
-        }
+        
     }
 
 	void Attack(){                                                              
-        if (!inAir && !attacking && !usingSpecialAttack)
+        if (!jumping && !attacking && !usingSpecialAttack)
         {
             if (Input.GetKeyDown(KeyCode.C))
             {
@@ -223,7 +216,7 @@ public class Fox_Move : MonoBehaviour {
 	}
 
 	void Special(){
-        if (Input.GetKey(KeyCode.Space) && !inAir && !attacking)
+        if (Input.GetKey(KeyCode.Space) && !jumping && !attacking)
         {
             walking = false; running = false; rb.velocity = Vector2.zero;
             usingSpecialAttack = true;
@@ -238,7 +231,7 @@ public class Fox_Move : MonoBehaviour {
 
 	void Crouch(){
         //Crouch
-        if(attacking == false && inAir == false)
+        if(attacking == false && jumping == false)
         {
             if (Input.GetKey(KeyCode.DownArrow))
             {
@@ -267,6 +260,12 @@ public class Fox_Move : MonoBehaviour {
 			anim.SetTrigger("Damage");
 			Hurt();
 		}
+        else if ((fallingDown) && other.gameObject.tag == "Ground")
+        {
+            fallingDown = false; flyingUp = false; jumping = false;
+            anim.SetTrigger("Ground");
+            rb.gravityScale = 3;
+        }
 	}
 
 	void Hurt(){
