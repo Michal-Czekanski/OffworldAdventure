@@ -4,11 +4,11 @@ using System.Collections;
 
 public class Fox_Move : MonoBehaviour {
 
-    public float walkingSpeed, runSpeed, jumpForce,cooldownHit;
+    public float walkingSpeed, runSpeed, jumpForce, cooldownHit;
 	public bool walking, running, flyingUp, fallingDown, jumpWasPressedAndIsPossible, jumping, crouching, dead, attacking, usingSpecialAttack;
-    private Rigidbody2D rb;
-    private Animator anim;
-	private SpriteRenderer sp;
+    private Rigidbody2D rigidBody2d;
+    private Animator animator;
+	private SpriteRenderer spriteRenderer;
 	private float rateOfHit;
 	private GameObject[] life;
 	private int qtdLife;
@@ -20,11 +20,10 @@ public class Fox_Move : MonoBehaviour {
 
     private bool movingLeftDisabled, movingRightDisabled;
 
-	// Use this for initialization
 	void Start () {
-        rb = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();
-		sp=GetComponent<SpriteRenderer>();
+        rigidBody2d = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+		spriteRenderer=GetComponent<SpriteRenderer>();
         playerCollider = GetComponent<BoxCollider2D>();
         walking = false;
 		running=false;
@@ -43,36 +42,40 @@ public class Fox_Move : MonoBehaviour {
     {
         if(dead == false)
         {
-            MovementInput();
-            JumpingInput();
-            Attack();
-            Crouch();
-            Special();
-
+            CheckMovementInput();
+            CheckJumpingInput();
+            CheckAttackInput();
+            CheckCrouchInput();
+            CheckSpecialAttackInput();
         }
     }
 
-    private void JumpingInput()
+    private void CheckJumpingInput()
     {
         if (Input.GetKeyDown(KeyCode.X) && !jumping)
         {
-            if (Mathf.Abs(rb.velocity.y) < 2)
+            if (Mathf.Abs(rigidBody2d.velocity.y) < 2) // this line doesn't allow jump when in air
             {
-                if (running)
-                {
-                    moveSpeedWhileInAir = runSpeed;
-                }
-                else
-                {
-                    moveSpeedWhileInAir = walkingSpeed;
-                }
-                jumpWasPressedAndIsPossible = true;
+                SetJumpSpeedAndMakeJumpOnNextFixedUpdate();
             }
-            
+
         }
     }
 
-    private void MovementInput()
+    private void SetJumpSpeedAndMakeJumpOnNextFixedUpdate()
+    {
+        if (running)
+        {
+            moveSpeedWhileInAir = runSpeed;
+        }
+        else
+        {
+            moveSpeedWhileInAir = walkingSpeed;
+        }
+        jumpWasPressedAndIsPossible = true;
+    }
+
+    private void CheckMovementInput()
     {
         if(!attacking && !crouching && !usingSpecialAttack)
         {
@@ -90,43 +93,99 @@ public class Fox_Move : MonoBehaviour {
                     walking = true; running = false;
                 }
             }
+            // If no arrow is pressed to move
             else
             {
-                walking = false; running = false;
-                // If no arrow is pressed to move then disable player's velocity immediately
-                Vector3 noHorizontalMoveVel = new Vector2(0, rb.velocity.y);
-                rb.velocity = noHorizontalMoveVel;
+                StopMoving();
             }
         } 
     }
 
-    // Update is called once per frame
-    void FixedUpdate () {
-
-        //if (dead == false)
-        //{
-        //    //Character doesnt choose direction in Jump									//If you want to choose direction in jump
-        //    if (attacking == false)
-        //    {                                                   //just delete the (jumping==false)
-        //        if (jumping == false && crouching == false)
-        //        {
-        //            Movement();
-        //            Attack();
-        //            Special();
-        //        }
-        //        Jump();
-        //        Crouch();
-        //    }
-        //    Dead();
-        //}
-
-        Movement();
-        Jump();
-
+    private void StopMoving()
+    {
+        walking = false; running = false;
+        // disable player's velocity immediately
+        Vector3 noHorizontalMoveVel = new Vector2(0, rigidBody2d.velocity.y);
+        rigidBody2d.velocity = noHorizontalMoveVel;
     }
 
-	void Movement(){
-        // Character Move
+    void FixedUpdate () {
+        Movement();
+        Jump();
+        CheckIfShouldDoFlyingUpOrFallingDownAnimation();
+    }
+
+	void Movement()
+    {
+        CheckIfShouldDisableMovement();
+
+        ApplyMovementForcesToPlayer();
+
+        ChangeDirectionOfPlayerSprite();
+
+        CheckIfShouldDoWalkingAnimation();
+
+        CheckIfShouldDoRunningAnimation();
+    }
+
+    private void CheckIfShouldDoRunningAnimation()
+    {
+        if (rigidBody2d.velocity.x != 0 && running == true)
+        {
+            animator.SetBool("Running", true);
+        }
+        else
+        {
+            animator.SetBool("Running", false);
+        }
+    }
+
+    private void CheckIfShouldDoWalkingAnimation()
+    {
+        if (rigidBody2d.velocity.x != 0 && walking == true)
+        {
+            animator.SetBool("Walking", true);
+        }
+        else
+        {
+            animator.SetBool("Walking", false);
+        }
+    }
+
+    private void ChangeDirectionOfPlayerSprite()
+    {
+        if (rigidBody2d.velocity.x < 0 && !attacking)
+        {
+            spriteRenderer.flipX = true;
+            animator.SetBool("LookingLeft", true);
+        }
+        else if (rigidBody2d.velocity.x > 0 && !attacking)
+        {
+            spriteRenderer.flipX = false;
+            animator.SetBool("LookingLeft", false);
+        }
+    }
+
+    private void ApplyMovementForcesToPlayer()
+    {
+        if (jumping)
+        {
+            rigidBody2d.velocity = new Vector2(horizontalMoveInput * moveSpeedWhileInAir * Time.deltaTime, rigidBody2d.velocity.y);
+        }
+        else if (running)
+        {
+            //Run
+            rigidBody2d.velocity = new Vector2(horizontalMoveInput * runSpeed * Time.deltaTime, rigidBody2d.velocity.y);
+        }
+        else if (walking)
+        {
+            //Walk
+            rigidBody2d.velocity = new Vector2(horizontalMoveInput * walkingSpeed * Time.deltaTime, rigidBody2d.velocity.y);
+        }
+    }
+
+    private void CheckIfShouldDisableMovement()
+    {
         if (movingLeftDisabled && horizontalMoveInput < 0)
         {
             horizontalMoveInput = 0;
@@ -135,195 +194,218 @@ public class Fox_Move : MonoBehaviour {
         {
             horizontalMoveInput = 0;
         }
-
-        if (jumping)
-        {
-            rb.velocity = new Vector2(horizontalMoveInput * moveSpeedWhileInAir * Time.deltaTime, rb.velocity.y);
-        }
-		else if(running)
-        {
-			//Run
-			rb.velocity = new Vector2(horizontalMoveInput*runSpeed*Time.deltaTime,rb.velocity.y);
-		}
-        else if (walking)
-        {
-			//Walk
-			rb.velocity = new Vector2(horizontalMoveInput*walkingSpeed*Time.deltaTime,rb.velocity.y);
-		}
-
-		//Turn
-		if(rb.velocity.x < 0 && !attacking)
-        {
-			sp.flipX=true;
-            anim.SetBool("LookingLeft", true);
-		}
-        else if(rb.velocity.x > 0 && !attacking)
-        {
-			sp.flipX=false;
-            anim.SetBool("LookingLeft", false);
-        }
-
-		// Walking Animation
-		if(rb.velocity.x != 0 && walking == true)
-        {
-			anim.SetBool("Walking", true);
-		}
-        else
-        {
-			anim.SetBool("Walking",false);
-		}
-
-        // Running Animation
-        if (rb.velocity.x != 0 && running == true)
-        {
-			anim.SetBool("Running",true);
-		}
-        else
-        {
-			anim.SetBool("Running",false);
-		}
-	}
-
-	void Jump(){
-		// Applying jump force
-		if(jumpWasPressedAndIsPossible)
-        {
-			rb.AddForce(new Vector2(0,jumpForce));
-            jumpWasPressedAndIsPossible = false;
-            jumping = true;
-            crouching = false;
-            rb.gravityScale = 1;
-		}
-        // Flying up Animation
-        if (rb.velocity.y > 2)
-        {
-            flyingUp = true; fallingDown = false;
-            anim.SetTrigger("Up");
-        }
-        // Falling animation
-        else if ((flyingUp && rb.velocity.y <= 0) || rb.velocity.y < -2)
-        {
-            flyingUp = false; fallingDown = true;
-            anim.SetTrigger("Down");
-        }
-        
     }
 
-	void Attack(){                                                              
+    void Jump()
+    {
+        if (jumpWasPressedAndIsPossible)
+        {
+            ApplyJumpForce();
+        }
+    }
+
+    private void ApplyJumpForce()
+    {
+        rigidBody2d.AddForce(new Vector2(0, jumpForce));
+        jumpWasPressedAndIsPossible = false;
+        jumping = true;
+        crouching = false;
+        rigidBody2d.gravityScale = 1;
+    }
+
+    private void CheckIfShouldDoFlyingUpOrFallingDownAnimation()
+    {
+        // Flying up animation
+        if (rigidBody2d.velocity.y > 2)
+        {
+            DoFlyingUpAnimation();
+        }
+        // Falling animation
+        else if ((flyingUp && rigidBody2d.velocity.y <= 0) || rigidBody2d.velocity.y < -2)
+        {
+            DoFallingDownAnimation();
+        }
+    }
+
+    private void DoFallingDownAnimation()
+    {
+        flyingUp = false; fallingDown = true;
+        animator.SetTrigger("Down");
+    }
+
+    private void DoFlyingUpAnimation()
+    {
+        flyingUp = true; fallingDown = false;
+        animator.SetTrigger("Up");
+    }
+
+    void CheckAttackInput(){                                                              
         if (!jumping && !attacking && !usingSpecialAttack)
         {
             if (Input.GetKeyDown(KeyCode.C))
             {
-                Vector3 noHorizontalMoveVel = new Vector2(0, rb.velocity.y);
-                rb.velocity = noHorizontalMoveVel;
-                anim.SetTrigger("Attack");
-                attacking = true;
-
-                walking = false; running = false;
+                PerformAttack();
             }
         }
 		
 	}
 
-	void AttackEnd()
+    private void PerformAttack()
+    {
+        Vector3 noHorizontalMoveVel = new Vector2(0, rigidBody2d.velocity.y);
+        rigidBody2d.velocity = noHorizontalMoveVel;
+        animator.SetTrigger("Attack");
+        attacking = true;
+
+        walking = false; running = false;
+    }
+
+    void AttackEnd()
     {
 		attacking=false;
 	}
 
-	void Special(){
+	void CheckSpecialAttackInput(){
         if (Input.GetKey(KeyCode.Space) && !jumping && !attacking)
         {
-            walking = false; running = false; rb.velocity = Vector2.zero;
-            usingSpecialAttack = true;
-            anim.SetBool("Special", true);
+            PerformSpecialAttack();
         }
         else
         {
-            usingSpecialAttack = false;
-            anim.SetBool("Special", false);
+            SpecialAttackEnd();
         }
     }
 
-	void Crouch(){
-        //Crouch
+    private void SpecialAttackEnd()
+    {
+        usingSpecialAttack = false;
+        animator.SetBool("Special", false);
+    }
+
+    private void PerformSpecialAttack()
+    {
+        walking = false; running = false; rigidBody2d.velocity = Vector2.zero;
+        usingSpecialAttack = true;
+        animator.SetBool("Special", true);
+    }
+
+    void CheckCrouchInput(){
         if(attacking == false && jumping == false)
         {
             if (Input.GetKey(KeyCode.DownArrow))
             {
-                walking = false; running = false; rb.velocity = Vector2.zero;
-                crouching = true;
-                anim.SetBool("Crouching", true);
+                PerformCrouch();
             }
             else
             {
-                crouching = false;
-                anim.SetBool("Crouching", false);
+                CrouchEnd();
             }
         }
         
     }
 
-	void OnTriggerEnter2D(Collider2D other){							//Case of Bullet
+    private void CrouchEnd()
+    {
+        crouching = false;
+        animator.SetBool("Crouching", false);
+    }
+
+    private void PerformCrouch()
+    {
+        walking = false; running = false; rigidBody2d.velocity = Vector2.zero;
+        crouching = true;
+        animator.SetBool("Crouching", true);
+    }
+
+    void OnTriggerEnter2D(Collider2D other){							// Case of bullet hit
 		if(other.tag=="Enemy"){
-			anim.SetTrigger("Damage");
+			animator.SetTrigger("Damage");
 			Hurt();
 		}
 	}								
 
-	void OnCollisionEnter2D(Collision2D other) {						//Case of Touch
-		if(other.gameObject.tag=="Enemy"){
-			anim.SetTrigger("Damage");
-			Hurt();
-		}
-        else if ((fallingDown) && other.gameObject.tag == "Ground")
+	void OnCollisionEnter2D(Collision2D other)
+    {                       // Case of enemy touch
+        if (other.gameObject.tag == "Enemy")
+        {
+            animator.SetTrigger("Damage");
+            Hurt();
+        }
+        CheckIfShouldStopFallingDownOrFlyingUpAnimation(other);
+    }
+
+    private void CheckIfShouldStopFallingDownOrFlyingUpAnimation(Collision2D other)
+    {
+        if ((fallingDown) && other.gameObject.tag == "Ground")
         {
             fallingDown = false; flyingUp = false; jumping = false;
-            anim.SetTrigger("Ground");
-            rb.gravityScale = 3;
+            animator.SetTrigger("Ground");
+            rigidBody2d.gravityScale = 3;
         }
-	}
+    }
 
     public void OnCollisionStay2D(Collision2D collision)
     {
-        Vector3 contactPoint = collision.contacts[0].point;
-        Vector3 playerColliderCenter = playerCollider.bounds.center;
+        CheckIfPlayerIsPushingAgainstTheWall(collision);
+    }
 
-        bool collisionFromPlayersRight = contactPoint.x > playerColliderCenter.x;
-        bool collisionFromPlayersLeft = contactPoint.x < playerColliderCenter.x;
-
-        
+    private void CheckIfPlayerIsPushingAgainstTheWall(Collision2D collision)
+    {
         if (!attacking && !usingSpecialAttack && !crouching && (walking || running || jumping))
         {
-            // If there is collsion from left of player ...
-            if (collisionFromPlayersLeft)
+            Vector3 contactPoint = collision.contacts[0].point;
+            Vector3 playerColliderCenter = playerCollider.bounds.center;
+
+            bool isCollisionFromPlayersRight = contactPoint.x > playerColliderCenter.x;
+            bool isCollisionFromPlayersLeft = contactPoint.x < playerColliderCenter.x;
+
+            CheckIfPlayerIsPushingWallOnHisLeft(isCollisionFromPlayersLeft);
+
+            CheckIfPlayerIsPushingWallOnHisRight(isCollisionFromPlayersRight);
+        }
+    }
+
+    private void CheckIfPlayerIsPushingWallOnHisRight(bool isCollisionFromPlayersRight)
+    {
+        if (isCollisionFromPlayersRight)
+        {
+            if (horizontalMoveInput > 0)
             {
-                // If user wants to go left - towards collision ...
-                Debug.Log("LEFT");
-                if (horizontalMoveInput < 0)
+                if (rigidBody2d.velocity.x < 0.01)
                 {
-                    // If player is not moving because of pushing against collision ...
-                    if (rb.velocity.x > -0.01)
-                    {
-                        // ... stop him from pushing on that collision, because he now floats in the air
-                        horizontalMoveInput = 0;
-                        movingLeftDisabled = true; movingRightDisabled = false;
-                    }
-                }
-            }
-            // Same as above if statement
-            if (collisionFromPlayersRight)
-            {
-                Debug.Log("RIGHT");
-                if (horizontalMoveInput > 0)
-                {
-                    if (rb.velocity.x < 0.01)
-                    {
-                        horizontalMoveInput = 0;
-                        movingRightDisabled = true; movingLeftDisabled = false;
-                    }
+                    StopPlayerFromPushingWallOnHisRight();
                 }
             }
         }
+    }
+
+    private void StopPlayerFromPushingWallOnHisRight()
+    {
+        horizontalMoveInput = 0;
+        movingRightDisabled = true; movingLeftDisabled = false;
+    }
+
+    private void CheckIfPlayerIsPushingWallOnHisLeft(bool isCollisionFromPlayersLeft)
+    {
+        if (isCollisionFromPlayersLeft)
+        {
+            // If user wants to go left - towards collision ...
+            if (horizontalMoveInput < 0)
+            {
+                // If player is not moving because of pushing against collision ...
+                if (rigidBody2d.velocity.x > -0.01)
+                {
+                    // ... stop him from pushing on that collision, because he now floats in the air
+                    StopPlayerFromPushingWallOnHisLeft();
+                }
+            }
+        }
+    }
+
+    private void StopPlayerFromPushingWallOnHisLeft()
+    {
+        horizontalMoveInput = 0;
+        movingLeftDisabled = true; movingRightDisabled = false;
     }
 
     public void OnCollisionExit2D(Collision2D collision)
@@ -341,9 +423,8 @@ public class Fox_Move : MonoBehaviour {
 
 	void Dead(){
 		if(qtdLife<=0){
-			anim.SetTrigger("Dead");
+			animator.SetTrigger("Dead");
 			dead=true;
-
 		}
 	}
 
