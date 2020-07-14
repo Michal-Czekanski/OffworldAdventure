@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Fox_Move : MonoBehaviour {
+public class PlayerController : MonoBehaviour {
 
     public float walkingSpeed, runSpeed, jumpForce, cooldownHit;
 	public bool walking, running, flyingUp, fallingDown, jumpWasPressedAndIsPossible, jumping, crouching, dead, attacking, usingSpecialAttack;
