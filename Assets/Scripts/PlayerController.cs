@@ -10,8 +10,14 @@ public class PlayerController : MonoBehaviour {
     private Animator animator;
 	private SpriteRenderer spriteRenderer;
 	private float rateOfHit;
-	private GameObject[] life;
-	private int qtdLife;
+
+    public int maxHp = 5;
+    private int hp;
+    public int Hp
+    {
+        get { return hp; }
+    }
+
 
     private float horizontalMoveInput, direction;
     private float moveSpeedWhileInAir = 0f;
@@ -37,9 +43,8 @@ public class PlayerController : MonoBehaviour {
         jumping = false;
 		crouching=false;
 		rateOfHit=Time.time;
-		life=GameObject.FindGameObjectsWithTag("Life");
-		qtdLife=life.Length;
         points = 0;
+        hp = maxHp;
 	}
 
 
@@ -432,13 +437,12 @@ public class PlayerController : MonoBehaviour {
     void Hurt(){
 		if(rateOfHit<Time.time){
 			rateOfHit=Time.time+cooldownHit;
-			Destroy(life[qtdLife-1]);
-			qtdLife-=1;
+            hp -= 1;
 		}
 	}
 
 	void Dead(){
-		if(qtdLife<=0){
+		if(hp <= 0){
 			animator.SetTrigger("Dead");
 			dead=true;
 		}
