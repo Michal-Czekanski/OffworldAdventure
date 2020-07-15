@@ -20,6 +20,10 @@ public class PlayerController : MonoBehaviour {
 
     private bool movingLeftDisabled, movingRightDisabled;
 
+    private int points;
+    public int pointsForCoin = 2;
+    public int pointsForDiamond = 10;
+
 	void Start () {
         rigidBody2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
@@ -35,6 +39,7 @@ public class PlayerController : MonoBehaviour {
 		rateOfHit=Time.time;
 		life=GameObject.FindGameObjectsWithTag("Life");
 		qtdLife=life.Length;
+        points = 0;
 	}
 
 
@@ -322,6 +327,17 @@ public class PlayerController : MonoBehaviour {
 			animator.SetTrigger("Damage");
 			Hurt();
 		}
+        else if (other.tag == "Coin")
+        {
+            points += pointsForCoin;
+            Destroy(other.gameObject);
+        }
+        else if (other.tag == "Diamond")
+        {
+            points += pointsForDiamond;
+            Destroy(other.gameObject);
+        }
+
 	}								
 
 	void OnCollisionEnter2D(Collision2D other)
