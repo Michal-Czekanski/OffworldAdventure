@@ -27,6 +27,11 @@ public class PlayerController : MonoBehaviour {
     private bool movingLeftDisabled, movingRightDisabled;
 
     private int points;
+    public int Points
+    {
+        get { return points; }
+    }
+
     public int pointsForCoin = 2;
     public int pointsForDiamond = 10;
 
