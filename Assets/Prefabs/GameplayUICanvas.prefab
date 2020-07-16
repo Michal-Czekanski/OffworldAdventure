@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 573503066028258763}
   - component: {fileID: 573503066028258766}
-  - component: {fileID: 573503066028258765}
   - component: {fileID: 573503066028258764}
   m_Layer: 5
   m_Name: HealthDisplay
@@ -46,39 +45,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 573503066028258762}
   m_CullTransparentMesh: 0
---- !u!114 &573503066028258765
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 573503066028258762}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
-  m_RaycastTarget: 1
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 60
-    m_FontStyle: 0
-    m_BestFit: 0
-    m_MinSize: 0
-    m_MaxSize: 130
-    m_Alignment: 0
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: 'Health: 9'
 --- !u!114 &573503066028258764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91,8 +57,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c4ba2bce48c37b4a8194be36fb9e9ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textDisplay: {fileID: 573503066028258765}
   playerController: {fileID: 0}
+  heartsPlaceholder: {fileID: 573503066028258763}
+  heartPrefab: {fileID: 4911876668781745586, guid: 5b50415bf6c30124783c1a6d4aaf97c7,
+    type: 3}
 --- !u!1 &573503067460228155
 GameObject:
   m_ObjectHideFlags: 0
