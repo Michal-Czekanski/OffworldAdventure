@@ -9,6 +9,7 @@ TagManager:
   - Ground
   - Diamond
   - Coin
+  - BottomBoundary
   layers:
   - Default
   - TransparentFX
