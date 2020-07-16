@@ -347,8 +347,16 @@ public class PlayerController : MonoBehaviour {
             points += pointsForDiamond;
             Destroy(other.gameObject);
         }
+        else if (other.gameObject.tag == "Life")
+        {
+            if (hp < maxHp)
+            {
+                hp += 1;
+                Destroy(other.gameObject);
+            }
+        }
 
-	}								
+    }								
 
 	void OnCollisionEnter2D(Collision2D other)
     {                       // Case of enemy touch
