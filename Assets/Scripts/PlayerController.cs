@@ -355,8 +355,19 @@ public class PlayerController : MonoBehaviour {
                 Destroy(other.gameObject);
             }
         }
+        else if (other.gameObject.tag == "BottomBoundary")
+        {
+            Invoke("DeathAfterFallOut", 3);
+        }
 
-    }								
+    }
+    
+    void DeathAfterFallOut()
+    {
+        rigidBody2d.isKinematic = true;
+        rigidBody2d.simulated = false;
+        hp = 0;
+    }
 
 	void OnCollisionEnter2D(Collision2D other)
     {                       // Case of enemy touch
