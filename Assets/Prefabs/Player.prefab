@@ -71,9 +71,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingLayerID: -1145172367
+  m_SortingLayer: 1
+  m_SortingOrder: 4
   m_Sprite: {fileID: 21300000, guid: 424ab41719af7a04c9a2e28c2911f63e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -169,11 +169,14 @@ MonoBehaviour:
   cooldownHit: 0
   walking: 0
   running: 0
-  up: 0
-  down: 0
-  jump: 0
-  inAir: 0
+  flyingUp: 0
+  fallingDown: 0
+  jumpWasPressedAndIsPossible: 0
+  jumping: 0
   crouching: 0
   dead: 0
   attacking: 0
   usingSpecialAttack: 0
+  maxHp: 5
+  pointsForCoin: 2
+  pointsForDiamond: 10
