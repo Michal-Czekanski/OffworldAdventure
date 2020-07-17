@@ -148,8 +148,8 @@ Rigidbody2D:
   m_GravityScale: 1
   m_Material: {fileID: 0}
   m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_SleepingMode: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!114 &1547261178278671040
 MonoBehaviour:
@@ -166,7 +166,6 @@ MonoBehaviour:
   walkingSpeed: 150
   runSpeed: 300
   jumpForce: 300
-  cooldownHit: 0
   walking: 0
   running: 0
   flyingUp: 0
@@ -177,6 +176,8 @@ MonoBehaviour:
   dead: 0
   attacking: 0
   usingSpecialAttack: 0
+  timeBetweenBeingHurtInSec: 3
+  hurtTimer: 0
   maxHp: 5
   pointsForCoin: 2
   pointsForDiamond: 10

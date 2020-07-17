@@ -1,15 +1,19 @@
 ﻿using UnityEngine.SceneManagement;
 using UnityEngine;
 using System.Collections;
+using System;
 
 public class PlayerController : MonoBehaviour {
 
-    public float walkingSpeed, runSpeed, jumpForce, cooldownHit;
+    public float walkingSpeed, runSpeed, jumpForce;
 	public bool walking, running, flyingUp, fallingDown, jumpWasPressedAndIsPossible, jumping, crouching, dead, attacking, usingSpecialAttack;
     private Rigidbody2D rigidBody2d;
     private Animator animator;
 	private SpriteRenderer spriteRenderer;
-	private float rateOfHit;
+
+    public float timeBetweenBeingHurtInSec = 3;
+    public float hurtTimer;
+
 
     public int maxHp = 5;
     private int hp;
@@ -47,9 +51,9 @@ public class PlayerController : MonoBehaviour {
 		jumpWasPressedAndIsPossible=false;
         jumping = false;
 		crouching=false;
-		rateOfHit=Time.time;
         points = 0;
         hp = maxHp;
+        hurtTimer = 0;
 	}
 
 
@@ -57,11 +61,20 @@ public class PlayerController : MonoBehaviour {
     {
         if(dead == false)
         {
+            UpdateTimers();
             CheckMovementInput();
             CheckJumpingInput();
             CheckAttackInput();
             CheckCrouchInput();
             CheckSpecialAttackInput();
+        }
+    }
+
+    private void UpdateTimers()
+    {
+        if(hurtTimer > 0)
+        {
+            hurtTimer -= Time.deltaTime;
         }
     }
 
@@ -334,7 +347,6 @@ public class PlayerController : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D other){							// Case of bullet hit
 		if(other.tag=="Enemy"){
-			animator.SetTrigger("Damage");
 			Hurt();
 		}
         else if (other.tag == "Coin")
@@ -373,7 +385,6 @@ public class PlayerController : MonoBehaviour {
     {                       // Case of enemy touch
         if (other.gameObject.tag == "Enemy")
         {
-            animator.SetTrigger("Damage");
             Hurt();
         }
         CheckIfShouldStopFallingDownOrFlyingUpAnimation(other);
@@ -392,6 +403,10 @@ public class PlayerController : MonoBehaviour {
     public void OnCollisionStay2D(Collision2D collision)
     {
         CheckIfPlayerIsPushingAgainstTheWall(collision);
+        if (collision.gameObject.tag == "Enemy")
+        {
+            Hurt();
+        }
     }
 
     private void CheckIfPlayerIsPushingAgainstTheWall(Collision2D collision)
@@ -459,10 +474,12 @@ public class PlayerController : MonoBehaviour {
     }
 
     void Hurt(){
-		if(rateOfHit<Time.time){
-			rateOfHit=Time.time+cooldownHit;
+		if (hurtTimer <= 0)
+        {
+            hurtTimer = timeBetweenBeingHurtInSec;
+            animator.SetTrigger("Damage");
             hp -= 1;
-		}
+        }
 	}
 
 	void Dead(){
