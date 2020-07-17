@@ -11,8 +11,8 @@ public class PlayerController : MonoBehaviour {
     private Animator animator;
 	private SpriteRenderer spriteRenderer;
 
-    public float timeBetweenBeingHurtInSec = 3;
-    public float hurtTimer;
+    public float timeBetweenBeingHurtInSec = 2;
+    private float hurtTimer;
 
 
     public int maxHp = 5;
@@ -67,6 +67,7 @@ public class PlayerController : MonoBehaviour {
             CheckAttackInput();
             CheckCrouchInput();
             CheckSpecialAttackInput();
+            CheckIfShouldBeDead();
         }
     }
 
@@ -138,9 +139,13 @@ public class PlayerController : MonoBehaviour {
     }
 
     void FixedUpdate () {
-        Movement();
-        Jump();
-        CheckIfShouldDoFlyingUpOrFallingDownAnimation();
+        if(dead == false)
+        {
+            Movement();
+            Jump();
+            CheckIfShouldDoFlyingUpOrFallingDownAnimation();
+        }
+        
     }
 
 	void Movement()
@@ -482,7 +487,7 @@ public class PlayerController : MonoBehaviour {
         }
 	}
 
-	void Dead(){
+	void CheckIfShouldBeDead(){
 		if(hp <= 0){
 			animator.SetTrigger("Dead");
 			dead=true;
