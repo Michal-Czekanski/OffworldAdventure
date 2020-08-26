@@ -397,7 +397,7 @@ public class PlayerController : MonoBehaviour {
 
     private void CheckIfShouldStopFallingDownOrFlyingUpAnimation(Collision2D other)
     {
-        if ((fallingDown) && other.gameObject.tag == "Ground")
+        if ((fallingDown) && (other.gameObject.tag == "Ground" || other.gameObject.tag == "Finish"))
         {
             fallingDown = false; flyingUp = false; jumping = false;
             animator.SetTrigger("Ground");
