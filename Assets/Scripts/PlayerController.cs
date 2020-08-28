@@ -84,6 +84,22 @@ public class PlayerController : MonoBehaviour {
 
     private void GoToNextLevel()
     {
+        int sceneCountInBuildSettings = SceneManager.sceneCountInBuildSettings;
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        int nextSceneIndex = currentSceneIndex + 1;
+
+        if (nextSceneIndex < sceneCountInBuildSettings)
+        {
+            SceneManager.LoadScene(currentSceneIndex + 1, LoadSceneMode.Single);
+        }
+        else
+        {
+            LastLevelCompletion();
+        }
+    }
+
+    private void LastLevelCompletion()
+    {
         throw new NotImplementedException();
     }
 
