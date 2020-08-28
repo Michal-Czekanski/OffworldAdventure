@@ -39,6 +39,8 @@ public class PlayerController : MonoBehaviour {
     public int pointsForCoin = 2;
     public int pointsForDiamond = 10;
 
+    private bool canGoToNextLevel = false;
+
 	void Start () {
         rigidBody2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
@@ -67,8 +69,22 @@ public class PlayerController : MonoBehaviour {
             CheckAttackInput();
             CheckCrouchInput();
             CheckSpecialAttackInput();
+            CheckGoToNextLevelInput();
             CheckIfShouldBeDead();
         }
+    }
+
+    private void CheckGoToNextLevelInput()
+    {
+        if (Input.GetKeyDown(KeyCode.E) && canGoToNextLevel)
+        {
+            GoToNextLevel();
+        }
+    }
+
+    private void GoToNextLevel()
+    {
+        throw new NotImplementedException();
     }
 
     private void UpdateTimers()
@@ -392,7 +408,16 @@ public class PlayerController : MonoBehaviour {
         {
             Hurt();
         }
+        CheckIfCanGoToNextLevel(other);
         CheckIfShouldStopFallingDownOrFlyingUpAnimation(other);
+    }
+
+    private void CheckIfCanGoToNextLevel(Collision2D other)
+    {
+        if (other.gameObject.tag == "Finish")
+        {
+            canGoToNextLevel = true;
+        }
     }
 
     private void CheckIfShouldStopFallingDownOrFlyingUpAnimation(Collision2D other)
@@ -475,7 +500,16 @@ public class PlayerController : MonoBehaviour {
 
     public void OnCollisionExit2D(Collision2D collision)
     {
+        CheckIfShouldStopAllowGoingToNextLevel(collision);
         movingLeftDisabled = false; movingRightDisabled = false;
+    }
+
+    private void CheckIfShouldStopAllowGoingToNextLevel(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Finish")
+        {
+            canGoToNextLevel = false;
+        }
     }
 
     void Hurt(){
