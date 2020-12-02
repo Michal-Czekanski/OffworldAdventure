@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.Data;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,7 +9,6 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class MainMenuButtonHandler : MonoBehaviour
 {
-    public static int selectLevelSceneIndex = 1;
     /// <summary>
     /// This method is called when Quit button is clicked
     /// </summary>
@@ -23,6 +23,6 @@ public class MainMenuButtonHandler : MonoBehaviour
     /// </summary>
     public void SelectLevelClick()
     {
-        SceneManager.LoadScene(selectLevelSceneIndex);
+        SceneManager.LoadScene((int)SceneBuildIndex.SelectLevel);
     }
 }
