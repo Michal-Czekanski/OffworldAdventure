@@ -1,21 +1,19 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.Data;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// This class is used to handle button clicks in SelectLevel scene
 /// </summary>
 public class SelectLevelButtonHandler : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    /// <summary>
+    /// This method is called when Back button is clicked
+    /// </summary>
+    public void BackToMainMenu()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        SceneManager.LoadScene((int)SceneBuildIndex.MainMenu);
     }
 }
