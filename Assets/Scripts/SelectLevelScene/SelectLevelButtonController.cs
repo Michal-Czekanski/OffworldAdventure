@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,11 +11,14 @@ public class SelectLevelButtonController : MonoBehaviour
 {
     public int levelNum;
     private Button selectLevelButton;
+    private TextMeshProUGUI textView;
 
     private void Start()
     {
-        // TODO: Update text displaying level num on start.
         selectLevelButton = GetComponent<Button>();
+        textView = GetComponentInChildren<TextMeshProUGUI>();
+
+        textView.text += levelNum.ToString();
         if (!LevelManager.IsLevelUnlocked(levelNum))
         {
             selectLevelButton.enabled = false;

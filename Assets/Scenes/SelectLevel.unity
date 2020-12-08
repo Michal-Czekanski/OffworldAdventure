@@ -1768,11 +1768,6 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 598367692628245871, guid: 8eef63a22a1b5a145891579e679c4a84,
         type: 3}
-      propertyPath: m_text
-      value: Level X
-      objectReference: {fileID: 0}
-    - target: {fileID: 598367692628245871, guid: 8eef63a22a1b5a145891579e679c4a84,
-        type: 3}
       propertyPath: m_firstOverflowCharacterIndex
       value: -1
       objectReference: {fileID: 0}
