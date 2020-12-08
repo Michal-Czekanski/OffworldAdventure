@@ -13,6 +13,7 @@ public class SelectLevelButtonController : MonoBehaviour
 
     private void Start()
     {
+        // TODO: Update text displaying level num on start.
         selectLevelButton = GetComponent<Button>();
         if (!LevelManager.IsLevelUnlocked(levelNum))
         {
