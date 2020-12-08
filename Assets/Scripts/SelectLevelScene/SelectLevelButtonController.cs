@@ -19,4 +19,12 @@ public class SelectLevelButtonController : MonoBehaviour
             selectLevelButton.enabled = false;
         }
     }
+
+    /// <summary>
+    /// This method is called when user wants to load level which this button represents.
+    /// </summary>
+    public void LoadLevel()
+    {
+        LevelManager.LoadLevel(levelNum);
+    }
 }
