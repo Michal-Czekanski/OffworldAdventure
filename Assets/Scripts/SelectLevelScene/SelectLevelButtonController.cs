@@ -21,6 +21,7 @@ public class SelectLevelButtonController : MonoBehaviour
         if (!LevelManager.IsLevelUnlocked(levelNum))
         {
             selectLevelButton.interactable = false;
+            textView.alpha = textView.alpha / 2;
         }
     }
 
