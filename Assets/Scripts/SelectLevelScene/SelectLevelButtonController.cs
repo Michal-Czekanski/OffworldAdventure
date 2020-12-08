@@ -20,7 +20,7 @@ public class SelectLevelButtonController : MonoBehaviour
         SetText();
         if (!LevelManager.IsLevelUnlocked(levelNum))
         {
-            selectLevelButton.enabled = false;
+            selectLevelButton.interactable = false;
         }
     }
 
