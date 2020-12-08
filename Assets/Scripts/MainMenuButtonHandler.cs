@@ -25,4 +25,12 @@ public class MainMenuButtonHandler : MonoBehaviour
     {
         SceneManager.LoadScene((int)SceneBuildIndex.SelectLevel);
     }
+
+    /// <summary>
+    /// This method is called when Options button is clicked.
+    /// </summary>
+    public void OptionsClick()
+    {
+        SceneManager.LoadScene((int)SceneBuildIndex.Options);
+    }
 }
