@@ -8,6 +8,6 @@ namespace Assets.Scripts.Data
 {
     public enum SceneBuildIndex
     {
-        MainMenu = 0, SelectLevel = 1
+        MainMenu = 0, SelectLevel = 1, Options = 2, Level1 = 3
     }
 }
