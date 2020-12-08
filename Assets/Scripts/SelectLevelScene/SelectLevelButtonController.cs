@@ -17,12 +17,16 @@ public class SelectLevelButtonController : MonoBehaviour
     {
         selectLevelButton = GetComponent<Button>();
         textView = GetComponentInChildren<TextMeshProUGUI>();
-
-        textView.text += levelNum.ToString();
+        SetText();
         if (!LevelManager.IsLevelUnlocked(levelNum))
         {
             selectLevelButton.enabled = false;
         }
+    }
+
+    private void SetText()
+    {
+        textView.text = "Level " + levelNum.ToString();
     }
 
     /// <summary>
