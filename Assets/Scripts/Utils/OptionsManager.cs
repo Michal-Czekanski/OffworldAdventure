@@ -14,5 +14,8 @@ using UnityEngine;
 /// </summary>
 public static class OptionsManager
 {
-    
+
+    private static readonly string resolutionPrefsKey = "Resolution";
+    private static readonly string fullscreenPrefsKey = "Fullscreen";
+    private static readonly string soundLevelPrefsKey = "SoundLevel";
 }
