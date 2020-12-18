@@ -29,4 +29,14 @@ public static class OptionsManager
         int resolutionId = PlayerPrefs.GetInt(resolutionPrefsKey, Resolutions.minId);
         return Resolutions.allResolutions[resolutionId];
     }
+
+    /// <summary>
+    /// Sets resolution and saves it's id in preferences.
+    /// </summary>
+    /// <param name="resolution">Resolution to use and save.</param>
+    public static void SetResolution(Assets.Scripts.Data.Resolution resolution)
+    {
+        Screen.SetResolution(resolution.Width, resolution.Height, Screen.fullScreen);
+        PlayerPrefs.SetInt(resolutionPrefsKey, resolution.Id);
+    }
 }
