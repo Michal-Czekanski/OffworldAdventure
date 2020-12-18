@@ -39,4 +39,31 @@ public static class OptionsManager
         Screen.SetResolution(resolution.Width, resolution.Height, Screen.fullScreen);
         PlayerPrefs.SetInt(resolutionPrefsKey, resolution.Id);
     }
+
+    /// <summary>
+    /// Tells if fullscreen is enabled. Retrieves information from preferences.
+    /// </summary>
+    /// <returns>True if fullscreen, false otherwise.</returns>
+    public static bool GetFullscreen()
+    {
+        return PlayerPrefs.GetInt(fullscreenPrefsKey, 1) > 0;
+    }
+
+    /// <summary>
+    /// Enables or disables fullscreen.
+    /// </summary>
+    /// <param name="fullscreen">Fullscreen on or off.</param>
+    public static void SetFullscreen(bool fullscreen)
+    {
+        Screen.fullScreen = fullscreen;
+        if (fullscreen)
+        {
+            PlayerPrefs.SetInt(fullscreenPrefsKey, 1);
+        }
+        else
+        {
+            PlayerPrefs.SetInt(fullscreenPrefsKey, 0);
+        }
+        
+    }
 }
