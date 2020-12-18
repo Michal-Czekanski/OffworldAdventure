@@ -12,7 +12,7 @@ namespace Assets.Scripts.Data
     /// <para>One of the game options is resolution.</para>
     /// 
     /// See <see cref="OptionsManager"/>. <br></br>
-    /// 
+    /// See <see cref="Resolutions"/>.
     /// </summary>
     public class Resolution
     {
