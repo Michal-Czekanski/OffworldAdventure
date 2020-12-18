@@ -11,6 +11,9 @@ namespace Assets.Scripts.Data
     /// </summary>
     public static class Resolutions
     {
+        public static readonly int minId = 0;
+        public static readonly int resolutionsCount = 5;
+
         public readonly static Resolution res1024x768 = new Resolution(0, 1024, 768);
         public readonly static Resolution res1280x960 = new Resolution(1, 1280, 960);
 
