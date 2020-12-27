@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts.Data;
+using System;
 
 /// <summary>
 /// <para> Class used to manage game options.</para>
@@ -65,5 +66,23 @@ public static class OptionsManager
             PlayerPrefs.SetInt(fullscreenPrefsKey, 0);
         }
         
+    }
+
+    /// <summary>
+    /// Sets sound level. Saves it in preferences.
+    /// </summary>
+    /// <param name="soundLevel">Sound level to set.</param>
+    public static void SetSoundLevel(SoundLevel soundLevel)
+    {
+        PlayerPrefs.SetInt(soundLevelPrefsKey, soundLevel.Level);
+    }
+
+    /// <summary>
+    /// Returns sound level. Retrieves it from preferences.
+    /// </summary>
+    /// <returns>Currently set sound level.</returns>
+    public static SoundLevel GetSoundLevel()
+    {
+        return new SoundLevel(PlayerPrefs.GetInt(soundLevelPrefsKey, SoundLevel.maxSoundLevel));
     }
 }
