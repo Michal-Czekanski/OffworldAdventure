@@ -31,4 +31,13 @@ public class ResolutionDropdownController : MonoBehaviour
             dropdown.options.Add(new TMP_Dropdown.OptionData(resolution.AsString));
         }
     }
+
+    /// <summary>
+    /// Sets resolution chosen by user using <see cref="OptionsManager"/>.
+    /// </summary>
+    /// <param name="resolutionId"></param>
+    public void ResolutionClick(int resolutionId)
+    {
+        OptionsManager.SetResolution(Resolutions.allResolutions[resolutionId]);
+    }
 }
