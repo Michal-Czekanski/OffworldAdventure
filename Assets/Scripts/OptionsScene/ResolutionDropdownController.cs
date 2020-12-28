@@ -30,6 +30,8 @@ public class ResolutionDropdownController : MonoBehaviour
         {
             dropdown.options.Add(new TMP_Dropdown.OptionData(resolution.AsString));
         }
+
+        dropdown.value = OptionsManager.GetResolution().Id;
     }
 
     /// <summary>
