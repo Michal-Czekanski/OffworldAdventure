@@ -27,7 +27,7 @@ public class SelectLevelButtonController : MonoBehaviour
 
     private void SetText()
     {
-        textView.text = "Level " + levelNum.ToString();
+        textView.text = "<" + "Level " + levelNum.ToString() + ">";
     }
 
     /// <summary>

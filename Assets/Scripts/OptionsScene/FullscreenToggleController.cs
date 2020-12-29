@@ -11,9 +11,9 @@ public class FullscreenToggleController : MonoBehaviour
     private Toggle toggle;
 
     /// <summary>
-    /// On start switch toggle off if fullscreen is disabled.
+    /// On awake switch toggle off if fullscreen is disabled.
     /// </summary>
-    private void Start()
+    private void Awake()
     {
         toggle = GetComponent<Toggle>();
         toggle.isOn = OptionsManager.GetFullscreen();
