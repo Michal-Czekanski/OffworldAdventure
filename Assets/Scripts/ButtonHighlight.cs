@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using System.Text.RegularExpressions;
+using UnityEngine.UI;
 
 public class ButtonHighlight : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -13,9 +14,15 @@ public class ButtonHighlight : MonoBehaviour, IPointerEnterHandler, IPointerExit
     /// </summary>
     private TextMeshProUGUI textView;
 
+    /// <summary>
+    /// Button which will be animated when highlighted.
+    /// </summary>
+    Button button;
+
     void Start()
     {
         textView = GetComponentInChildren<TextMeshProUGUI>();
+        button = GetComponent<Button>();
     }
 
     /// <summary>
@@ -24,7 +31,10 @@ public class ButtonHighlight : MonoBehaviour, IPointerEnterHandler, IPointerExit
     /// <param name="eventData"></param>
     public void OnPointerEnter(PointerEventData eventData)
     {
-        textView.text = Regex.Replace(textView.text, @"<(.*)>", @"< $1 >");
+        if (button.interactable)
+        {
+            textView.text = Regex.Replace(textView.text, @"<(.*)>", @"< $1 >");
+        }
     }
 
     /// <summary>
@@ -33,6 +43,9 @@ public class ButtonHighlight : MonoBehaviour, IPointerEnterHandler, IPointerExit
     /// <param name="eventData"></param>
     public void OnPointerExit(PointerEventData eventData)
     {
-        textView.text = Regex.Replace(textView.text, @"< (.*) >", @"<$1>");
+        if (button.interactable)
+        {
+            textView.text = Regex.Replace(textView.text, @"< (.*) >", @"<$1>");
+        }
     }
 }
