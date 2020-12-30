@@ -33,8 +33,16 @@ public class ButtonHighlight : MonoBehaviour, IPointerEnterHandler, IPointerExit
     {
         if (button.interactable)
         {
-            textView.text = Regex.Replace(textView.text, @"<(.*)>", @"< $1 >");
+            Highlight();
         }
+    }
+
+    /// <summary>
+    /// Highlights button by changing its text from <...> to < ... >.
+    /// </summary>
+    private void Highlight()
+    {
+        textView.text = Regex.Replace(textView.text, @"<(.*)>", @"< $1 >");
     }
 
     /// <summary>
@@ -45,7 +53,23 @@ public class ButtonHighlight : MonoBehaviour, IPointerEnterHandler, IPointerExit
     {
         if (button.interactable)
         {
-            textView.text = Regex.Replace(textView.text, @"< (.*) >", @"<$1>");
+            StopHighlight();
         }
+    }
+
+    /// <summary>
+    /// Stops highlighting button by changing its text from < ... > to <...>.
+    /// </summary>
+    private void StopHighlight()
+    {
+        textView.text = Regex.Replace(textView.text, @"< (.*) >", @"<$1>");
+    }
+
+    /// <summary>
+    /// On button disable stop highlighting it.
+    /// </summary>
+    private void OnDisable()
+    {
+        StopHighlight();
     }
 }
