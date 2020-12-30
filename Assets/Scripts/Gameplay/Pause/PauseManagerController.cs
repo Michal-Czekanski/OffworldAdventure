@@ -93,6 +93,14 @@ public class PauseManagerController : MonoBehaviour
     private void ResumeGame()
     {
         pauseScene.SetActive(false);
+        UnfreezeGame();
+    }
+
+    /// <summary>
+    /// Disables game freeze.
+    /// </summary>
+    private void UnfreezeGame()
+    {
         Time.timeScale = 1f;
         gamePaused = false;
     }
@@ -102,7 +110,7 @@ public class PauseManagerController : MonoBehaviour
     /// </summary>
     private void BackToMainMenu()
     {
-        ResumeGame();
+        UnfreezeGame();
         SceneManager.LoadScene((int)SceneBuildIndex.MainMenu);
     }
 
