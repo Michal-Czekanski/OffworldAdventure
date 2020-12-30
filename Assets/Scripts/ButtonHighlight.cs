@@ -70,6 +70,10 @@ public class ButtonHighlight : MonoBehaviour, IPointerEnterHandler, IPointerExit
     /// </summary>
     private void OnDisable()
     {
-        StopHighlight();
+        if(textView != null)
+        {
+            StopHighlight();
+
+        }
     }
 }
