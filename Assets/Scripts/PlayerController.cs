@@ -61,16 +61,19 @@ public class PlayerController : MonoBehaviour {
 
     public void Update()
     {
-        if(dead == false)
+        if (!PauseManagerController.gamePaused)
         {
-            UpdateTimers();
-            CheckMovementInput();
-            CheckJumpingInput();
-            CheckAttackInput();
-            CheckCrouchInput();
-            CheckSpecialAttackInput();
-            CheckGoToNextLevelInput();
-            CheckIfShouldBeDead();
+            if (dead == false)
+            {
+                UpdateTimers();
+                CheckMovementInput();
+                CheckJumpingInput();
+                CheckAttackInput();
+                CheckCrouchInput();
+                CheckSpecialAttackInput();
+                CheckGoToNextLevelInput();
+                CheckIfShouldBeDead();
+            }
         }
     }
 
