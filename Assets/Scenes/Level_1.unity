@@ -915,6 +915,11 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 573503066028258763, guid: a65934a951de16442bc0442254e8b81b,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 325
+      objectReference: {fileID: 0}
     - target: {fileID: 573503066028258764, guid: a65934a951de16442bc0442254e8b81b,
         type: 3}
       propertyPath: playerController
@@ -935,6 +940,11 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 573503067460228156, guid: a65934a951de16442bc0442254e8b81b,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 350
+      objectReference: {fileID: 0}
     - target: {fileID: 573503067460228159, guid: a65934a951de16442bc0442254e8b81b,
         type: 3}
       propertyPath: playerController
@@ -944,6 +954,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: GameplayUICanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 573503067919008617, guid: a65934a951de16442bc0442254e8b81b,
+        type: 3}
+      propertyPath: m_MatchWidthOrHeight
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 573503067919008619, guid: a65934a951de16442bc0442254e8b81b,
         type: 3}
@@ -1597,6 +1612,11 @@ PrefabInstance:
     - target: {fileID: 6015766619959367754, guid: 89e868f01b166af49b1aefad8421a8b4,
         type: 3}
       propertyPath: m_textInfo.pageCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6015766620469515752, guid: 89e868f01b166af49b1aefad8421a8b4,
+        type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6015766620514308654, guid: 89e868f01b166af49b1aefad8421a8b4,
