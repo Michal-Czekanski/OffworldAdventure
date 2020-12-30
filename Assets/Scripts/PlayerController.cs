@@ -28,7 +28,6 @@ public class PlayerController : MonoBehaviour {
 
     private BoxCollider2D playerCollider;
 
-    private bool movingLeftDisabled, movingRightDisabled;
 
     private int points;
     public int Points
@@ -185,8 +184,6 @@ public class PlayerController : MonoBehaviour {
 
 	void Movement()
     {
-        CheckIfShouldDisableMovement();
-
         ApplyMovementForcesToPlayer();
 
         ChangeDirectionOfPlayerSprite();
@@ -252,17 +249,6 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    private void CheckIfShouldDisableMovement()
-    {
-        if (movingLeftDisabled && horizontalMoveInput < 0)
-        {
-            horizontalMoveInput = 0;
-        }
-        if (movingRightDisabled && horizontalMoveInput > 0)
-        {
-            horizontalMoveInput = 0;
-        }
-    }
 
     void Jump()
     {
@@ -451,76 +437,16 @@ public class PlayerController : MonoBehaviour {
 
     public void OnCollisionStay2D(Collision2D collision)
     {
-        CheckIfPlayerIsPushingAgainstTheWall(collision);
         if (collision.gameObject.tag == "Enemy")
         {
             Hurt();
         }
     }
 
-    private void CheckIfPlayerIsPushingAgainstTheWall(Collision2D collision)
-    {
-        if (!attacking && !usingSpecialAttack && !crouching && (walking || running || jumping))
-        {
-            Vector3 contactPoint = collision.contacts[0].point;
-            Vector3 playerColliderCenter = playerCollider.bounds.center;
-
-            bool isCollisionFromPlayersRight = contactPoint.x > playerColliderCenter.x;
-            bool isCollisionFromPlayersLeft = contactPoint.x < playerColliderCenter.x;
-
-            CheckIfPlayerIsPushingWallOnHisLeft(isCollisionFromPlayersLeft);
-
-            CheckIfPlayerIsPushingWallOnHisRight(isCollisionFromPlayersRight);
-        }
-    }
-
-    private void CheckIfPlayerIsPushingWallOnHisRight(bool isCollisionFromPlayersRight)
-    {
-        if (isCollisionFromPlayersRight)
-        {
-            if (horizontalMoveInput > 0)
-            {
-                if (rigidBody2d.velocity.x < 0.01)
-                {
-                    StopPlayerFromPushingWallOnHisRight();
-                }
-            }
-        }
-    }
-
-    private void StopPlayerFromPushingWallOnHisRight()
-    {
-        horizontalMoveInput = 0;
-        movingRightDisabled = true; movingLeftDisabled = false;
-    }
-
-    private void CheckIfPlayerIsPushingWallOnHisLeft(bool isCollisionFromPlayersLeft)
-    {
-        if (isCollisionFromPlayersLeft)
-        {
-            // If user wants to go left - towards collision ...
-            if (horizontalMoveInput < 0)
-            {
-                // If player is not moving because of pushing against collision ...
-                if (rigidBody2d.velocity.x > -0.01)
-                {
-                    // ... stop him from pushing on that collision, because he now floats in the air
-                    StopPlayerFromPushingWallOnHisLeft();
-                }
-            }
-        }
-    }
-
-    private void StopPlayerFromPushingWallOnHisLeft()
-    {
-        horizontalMoveInput = 0;
-        movingLeftDisabled = true; movingRightDisabled = false;
-    }
 
     public void OnCollisionExit2D(Collision2D collision)
     {
         CheckIfShouldStopAllowGoingToNextLevel(collision);
-        movingLeftDisabled = false; movingRightDisabled = false;
     }
 
     private void CheckIfShouldStopAllowGoingToNextLevel(Collision2D collision)
@@ -545,9 +471,5 @@ public class PlayerController : MonoBehaviour {
 			animator.SetTrigger("Dead");
 			dead=true;
 		}
-	}
-
-	public void TryAgain(){														//Just to Call the level again
-		SceneManager.LoadScene(0);
 	}
 }

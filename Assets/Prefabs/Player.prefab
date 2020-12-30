@@ -72,7 +72,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1145172367
-  m_SortingLayer: 1
+  m_SortingLayer: 2
   m_SortingOrder: 4
   m_Sprite: {fileID: 21300000, guid: 424ab41719af7a04c9a2e28c2911f63e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -146,7 +146,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 62dc705e884ae9a47aba6996e368e1ed, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 0
   m_CollisionDetection: 1
@@ -177,7 +177,6 @@ MonoBehaviour:
   attacking: 0
   usingSpecialAttack: 0
   timeBetweenBeingHurtInSec: 3
-  hurtTimer: 0
   maxHp: 5
   pointsForCoin: 2
   pointsForDiamond: 10
