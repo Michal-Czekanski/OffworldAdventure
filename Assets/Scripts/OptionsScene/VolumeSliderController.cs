@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
+using Assets.Scripts.Data;
 
 /// <summary>
 /// Manages VolumeSlider which is in Options scene.
@@ -17,5 +19,16 @@ public class VolumeSliderController : MonoBehaviour
     {
         volumeSlider = GetComponent<Slider>();
         volumeSlider.value = OptionsManager.GetSoundLevel().Level;
+
+        volumeSlider.onValueChanged.AddListener(new UnityAction<float>(ValueChanged));
+    }
+
+    /// <summary>
+    /// Sets new <see cref="SoundLevel"/> using <see cref="OptionsManager"/>.
+    /// </summary>
+    /// <param name="soundLevel">Sound level to set.</param>
+    private void ValueChanged(float soundLevel)
+    {
+        OptionsManager.SetSoundLevel(new SoundLevel((int)soundLevel));
     }
 }
