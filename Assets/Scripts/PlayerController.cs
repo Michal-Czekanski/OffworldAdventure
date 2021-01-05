@@ -6,12 +6,31 @@ using System;
 public class PlayerController : MonoBehaviour {
 
     public float walkingSpeed, runSpeed, jumpForce;
-	public bool walking, running, flyingUp, fallingDown, jumpWasPressedAndIsPossible, jumping, crouching, dead, attacking, usingSpecialAttack;
+	public bool walking, running, flyingUp, fallingDown, applyJumpForce, jumping, crouching, dead, attacking, usingSpecialAttack;
+
+    /// <summary>
+    /// Rigidbody component of player game object.
+    /// </summary>
     private Rigidbody2D rigidBody2d;
+
+    /// <summary>
+    /// Animator component of player game object.
+    /// </summary>
     private Animator animator;
+
+    /// <summary>
+    /// Sprite renderer of player game object.
+    /// </summary>
 	private SpriteRenderer spriteRenderer;
 
-    public float timeBetweenBeingHurtInSec = 2;
+    /// <summary>
+    /// In seconds.
+    /// </summary>
+    public float hurtTimeInterval = 2;
+
+    /// <summary>
+    /// Is used to apply damage in time intervals.
+    /// </summary>
     private float hurtTimer;
 
 
@@ -28,17 +47,29 @@ public class PlayerController : MonoBehaviour {
 
     private BoxCollider2D playerCollider;
 
-
+    /// <summary>
+    /// Player earns points by collecting certain items.
+    /// </summary>
     private int points;
     public int Points
     {
         get { return points; }
     }
 
+    /// <summary>
+    /// Amount of points for collecting coin.
+    /// </summary>
     public int pointsForCoin = 2;
+
+    /// <summary>
+    /// Amount of points for collecting diamond.
+    /// </summary>
     public int pointsForDiamond = 10;
 
-    private bool canGoToNextLevel = false;
+    /// <summary>
+    /// If player is near next level entrance he can finish current level.
+    /// </summary>
+    private bool nearNextLvlEntrance = false;
 
 	void Start () {
         rigidBody2d = GetComponent<Rigidbody2D>();
@@ -49,7 +80,7 @@ public class PlayerController : MonoBehaviour {
 		running=false;
 		flyingUp=false;
 		fallingDown=false;
-		jumpWasPressedAndIsPossible=false;
+		applyJumpForce=false;
         jumping = false;
 		crouching=false;
         points = 0;
@@ -78,7 +109,7 @@ public class PlayerController : MonoBehaviour {
 
     private void CheckGoToNextLevelInput()
     {
-        if (Input.GetKeyDown(KeyCode.E) && canGoToNextLevel)
+        if (Input.GetKeyDown(KeyCode.E) && nearNextLvlEntrance)
         {
             GoToNextLevel();
         }
@@ -105,6 +136,9 @@ public class PlayerController : MonoBehaviour {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Updates all timers by measuring how much time passed since last frame.
+    /// </summary>
     private void UpdateTimers()
     {
         if(hurtTimer > 0)
@@ -113,6 +147,9 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Checks if player can jump and if user wants to jump == TRUE: sets appropiate values to perform jump.
+    /// </summary>
     private void CheckJumpingInput()
     {
         if (Input.GetKeyDown(KeyCode.X) && !jumping)
@@ -125,6 +162,14 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// <para>
+    /// Sets how fast player will move in the air while jumping and <br/>
+    /// makes player jump on next FixedUpdate() call.
+    /// </para>
+    /// If player was walking and jump was pressed he will have slower jump speed. <br></br>
+    /// If player was running and jump was pressed he will have faster jump speed.
+    /// </summary>
     private void SetJumpSpeedAndMakeJumpOnNextFixedUpdate()
     {
         if (running)
@@ -135,9 +180,12 @@ public class PlayerController : MonoBehaviour {
         {
             moveSpeedWhileInAir = walkingSpeed;
         }
-        jumpWasPressedAndIsPossible = true;
+        applyJumpForce = true; // This makes player jump on next FixedUpdate() call.
     }
 
+    /// <summary>
+    /// Checks if player can move and then checks movement inputs.
+    /// </summary>
     private void CheckMovementInput()
     {
         if(!attacking && !crouching && !usingSpecialAttack)
@@ -159,12 +207,15 @@ public class PlayerController : MonoBehaviour {
             // If no arrow is pressed to move
             else
             {
-                StopMoving();
+                StopHorizontalMovement();
             }
         } 
     }
 
-    private void StopMoving()
+    /// <summary>
+    /// Disables horizontal velocity.
+    /// </summary>
+    private void StopHorizontalMovement()
     {
         walking = false; running = false;
         // disable player's velocity immediately
@@ -182,9 +233,12 @@ public class PlayerController : MonoBehaviour {
         
     }
 
+    /// <summary>
+    /// Makes player move horizontally by applying certain forces and animations.
+    /// </summary>
 	void Movement()
     {
-        ApplyMovementForcesToPlayer();
+        ApplyHorizontalMovementForcesToPlayer();
 
         ChangeDirectionOfPlayerSprite();
 
@@ -193,6 +247,9 @@ public class PlayerController : MonoBehaviour {
         CheckIfShouldDoRunningAnimation();
     }
 
+    /// <summary>
+    /// Starts or stops running animation.
+    /// </summary>
     private void CheckIfShouldDoRunningAnimation()
     {
         if (rigidBody2d.velocity.x != 0 && running == true)
@@ -205,6 +262,9 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Starts or stops walking animation.
+    /// </summary>
     private void CheckIfShouldDoWalkingAnimation()
     {
         if (rigidBody2d.velocity.x != 0 && walking == true)
@@ -217,6 +277,9 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Changes players sprite looking direction based on movement direction.
+    /// </summary>
     private void ChangeDirectionOfPlayerSprite()
     {
         if (rigidBody2d.velocity.x < 0 && !attacking)
@@ -231,7 +294,10 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    private void ApplyMovementForcesToPlayer()
+    /// <summary>
+    /// Applies horizontal movement forces to player.
+    /// </summary>
+    private void ApplyHorizontalMovementForcesToPlayer()
     {
         if (jumping)
         {
@@ -249,24 +315,32 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-
+    /// <summary>
+    /// Checks if jump force should be applied and applies it.
+    /// </summary>
     void Jump()
     {
-        if (jumpWasPressedAndIsPossible)
+        if (applyJumpForce)
         {
             ApplyJumpForce();
         }
     }
 
+    /// <summary>
+    /// Makes player jump by applying jump force and sets appropiate gravity scale for jumping.
+    /// </summary>
     private void ApplyJumpForce()
     {
         rigidBody2d.AddForce(new Vector2(0, jumpForce));
-        jumpWasPressedAndIsPossible = false;
+        applyJumpForce = false;
         jumping = true;
         crouching = false;
         rigidBody2d.gravityScale = 1;
     }
 
+    /// <summary>
+    /// Checks if flying up or falling down animation should be played and plays it.
+    /// </summary>
     private void CheckIfShouldDoFlyingUpOrFallingDownAnimation()
     {
         // Flying up animation
@@ -281,18 +355,32 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Plays falling down animation.
+    /// </summary>
     private void DoFallingDownAnimation()
     {
         flyingUp = false; fallingDown = true;
         animator.SetTrigger("Down");
     }
 
+
+    /// <summary>
+    /// Plays flying up animation.
+    /// </summary>
     private void DoFlyingUpAnimation()
     {
         flyingUp = true; fallingDown = false;
         animator.SetTrigger("Up");
     }
 
+    /// <summary>
+    /// <list type="bullet">
+    /// <item> Checks if attacking is possible, then ... </item>
+    /// <item> Checks if user wants to attack, then ... </item>
+    /// <item> Performs attack</item>
+    /// </list>
+    /// </summary>
     void CheckAttackInput(){                                                              
         if (!jumping && !attacking && !usingSpecialAttack)
         {
@@ -304,6 +392,9 @@ public class PlayerController : MonoBehaviour {
 		
 	}
 
+    /// <summary>
+    /// Performs attack.
+    /// </summary>
     private void PerformAttack()
     {
         Vector3 noHorizontalMoveVel = new Vector2(0, rigidBody2d.velocity.y);
@@ -319,6 +410,13 @@ public class PlayerController : MonoBehaviour {
 		attacking=false;
 	}
 
+    /// <summary>
+    /// Performs special attack if:
+    /// <list type="bullet">
+    /// <item>user wants to attack</item>
+    /// <item>special attack is possible</item>
+    /// </list>
+    /// </summary>
 	void CheckSpecialAttackInput(){
         if (Input.GetKey(KeyCode.Space) && !jumping && !attacking)
         {
@@ -330,12 +428,18 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Stops special attack.
+    /// </summary>
     private void SpecialAttackEnd()
     {
         usingSpecialAttack = false;
         animator.SetBool("Special", false);
     }
 
+    /// <summary>
+    /// Performs special attack.
+    /// </summary>
     private void PerformSpecialAttack()
     {
         walking = false; running = false; rigidBody2d.velocity = Vector2.zero;
@@ -343,6 +447,14 @@ public class PlayerController : MonoBehaviour {
         animator.SetBool("Special", true);
     }
 
+    /// <summary>
+    /// Performs crouch if:
+    /// <list type="bullet">
+    /// <item>user wants to crouch</item>
+    /// <item>crouch is possible</item>
+    /// </list>
+    /// Also checks if shouuld stop crouching.
+    /// </summary>
     void CheckCrouchInput(){
         if(attacking == false && jumping == false)
         {
@@ -358,12 +470,18 @@ public class PlayerController : MonoBehaviour {
         
     }
 
+    /// <summary>
+    /// Stops crouching.
+    /// </summary>
     private void CrouchEnd()
     {
         crouching = false;
         animator.SetBool("Crouching", false);
     }
 
+    /// <summary>
+    /// Performs crouch.
+    /// </summary>
     private void PerformCrouch()
     {
         walking = false; running = false; rigidBody2d.velocity = Vector2.zero;
@@ -371,7 +489,7 @@ public class PlayerController : MonoBehaviour {
         animator.SetBool("Crouching", true);
     }
 
-    void OnTriggerEnter2D(Collider2D other){							// Case of bullet hit
+    void OnTriggerEnter2D(Collider2D other){
 		if(other.tag=="Enemy"){
 			Hurt();
 		}
@@ -400,6 +518,9 @@ public class PlayerController : MonoBehaviour {
 
     }
     
+    /// <summary>
+    /// Player has fallen out of the game.
+    /// </summary>
     void DeathAfterFallOut()
     {
         rigidBody2d.isKinematic = true;
@@ -408,20 +529,24 @@ public class PlayerController : MonoBehaviour {
     }
 
 	void OnCollisionEnter2D(Collision2D other)
-    {                       // Case of enemy touch
+    {
         if (other.gameObject.tag == "Enemy")
         {
             Hurt();
         }
-        CheckIfCanGoToNextLevel(other);
+        CheckIfNearNextLvlEntrance(other);
         CheckIfShouldStopFallingDownOrFlyingUpAnimation(other);
     }
 
-    private void CheckIfCanGoToNextLevel(Collision2D other)
+    /// <summary>
+    /// Checks if player is near next level entrance.
+    /// </summary>
+    /// <param name="other"></param>
+    private void CheckIfNearNextLvlEntrance(Collision2D other)
     {
         if (other.gameObject.tag == "Finish")
         {
-            canGoToNextLevel = true;
+            nearNextLvlEntrance = true;
         }
     }
 
@@ -446,26 +571,36 @@ public class PlayerController : MonoBehaviour {
 
     public void OnCollisionExit2D(Collision2D collision)
     {
-        CheckIfShouldStopAllowGoingToNextLevel(collision);
+        CheckIfNoLongerNearNextLvlEntrance(collision);
     }
 
-    private void CheckIfShouldStopAllowGoingToNextLevel(Collision2D collision)
+    /// <summary>
+    /// Checks if player is no longer near next level entrance.
+    /// </summary>
+    /// <param name="collision"></param>
+    private void CheckIfNoLongerNearNextLvlEntrance(Collision2D collision)
     {
         if (collision.gameObject.tag == "Finish")
         {
-            canGoToNextLevel = false;
+            nearNextLvlEntrance = false;
         }
     }
 
+    /// <summary>
+    /// Deals damage to player.
+    /// </summary>
     void Hurt(){
 		if (hurtTimer <= 0)
         {
-            hurtTimer = timeBetweenBeingHurtInSec;
+            hurtTimer = hurtTimeInterval;
             animator.SetTrigger("Damage");
             hp -= 1;
         }
 	}
 
+    /// <summary>
+    /// Checks if player has 0 hp.
+    /// </summary>
 	void CheckIfShouldBeDead(){
 		if(hp <= 0){
 			animator.SetTrigger("Dead");
